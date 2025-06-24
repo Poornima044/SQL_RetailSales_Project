@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="retail_project.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser query" current="2"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1116"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="sales" custom_title="0" dock_id="1" table="4,5:mainsales"/><table title="customers" custom_title="0" dock_id="2" table="4,9:maincustomers"/><dock_state state="000000ff00000000fd0000000100000002000005f4000002aefc0100000001fc00000000000005f40000015c00fffffffa000000000100000002fb000000160064006f0063006b00420072006f00770073006500310100000000ffffffff0000015c00fffffffb000000160064006f0063006b00420072006f00770073006500320100000000ffffffff0000015c00ffffff000005f40000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="customers" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="77"/><column index="2" value="195"/><column index="3" value="29"/><column index="4" value="54"/><column index="5" value="179"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="products" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort><column index="0" mode="0"/></sort><column_widths><column index="1" value="69"/><column index="2" value="101"/><column index="3" value="93"/><column index="4" value="54"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="sales" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="48"/><column index="2" value="69"/><column index="3" value="54"/><column index="4" value="77"/><column index="5" value="84"/><column index="6" value="85"/><column index="7" value="69"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="stores" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="54"/><column index="2" value="226"/><column index="3" value="179"/><column index="4" value="46"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 4">--📊 Sales &amp; Revenue Analysis
+
+--What is the total revenue generated per product?
+SELECT 
+  p.product_name,
+  sum(s.total_price) as total_revenue
+FROM products p
+JOIN sales s ON p.product_id = s.product_id
+GROUP BY p.product_name
+ORDER BY total_revenue DESC;
+ 
+--Which store generated the highest revenue in 2025?
+SELECT 
+  st.store_name,
+  sum(s.total_price) AS total_revenue,
+  strftime('%Y', s.sale_date) AS year
+FROM sales s 
+JOIN stores st ON s.store_id = st.store_id
+WHERE strftime('%Y', s.sale_date) = '2025'
+GROUP BY st.store_name
+ORDER BY total_revenue DESC
+LIMIT 1;  
+
+--Which month had the highest total sales across all stores?
+SELECT
+  st.store_name,
+  sum(s.total_price) AS total_revenue,
+  strftime('%Y-%m', s.sale_date) AS sale_month
+FROM stores st
+JOIN sales s ON st.store_id = s.store_id
+GROUP BY sale_month
+ORDER BY total_revenue DESC
+LIMIT 1;
+ 
+--What is the average order value per store? 
+SELECT
+ st.store_name,
+ count(s.sale_id) AS total_sales,
+ round(sum(s.total_price), 2) AS total_revenue,
+ round(sum(s.total_price) *1.0/count(s.sale_id),2) AS avg_order_value
+FROM stores st
+JOIN sales s ON st.store_id = s.store_id
+GROUP BY st.store_name
+ORDER BY avg_order_value DESC;
+
+
+--🛒 Product Insights
+
+--Which are the top 5 best-selling products by quantity sold?
+SELECT 
+  p.product_name,
+  sum(s.quantity_sold) AS total_quantity
+FROM products p
+JOIN sales s ON p.product_id = s.product_id
+GROUP BY p.product_name
+ORDER BY total_quantity DESC
+LIMIT 5;
+
+--List products that were never sold.
+SELECT
+  p.product_name
+FROM products p
+LEFT JOIN sales s ON p.product_id = s.product_id
+WHERE s.sale_id IS NULL;
+
+--Which products have a high price but low sales volume?
+WITH highest_price AS (
+  SELECT product_id, product_name, price
+  FROM products
+  GROUP BY product_name
+  ORDER BY price DESC
+ LIMIT 10)
+
+ SELECT 
+  hp.product_name,
+  hp.price,
+  sum(s.quantity_sold) AS total_quantity_sold
+FROM highest_price hp
+JOIN sales s ON hp.product_id = s.product_id
+GROUP BY hp.product_name
+ORDER BY s.total_price ASC
+LIMIT 10;
+
+
+--🧍‍♂️ Customer Behavior
+
+--Which customer made the highest number of purchases?
+SELECT
+  c.name,
+  count(s.sale_id) AS total_orders,
+  sum(s.total_price) AS total_amount
+FROM customers c
+JOIN sales s ON c.customer_id = s.customer_id
+GROUP BY c.name
+ORDER BY total_orders DESC
+LIMIT 1;  
+
+--Which customer spent the most in total?
+SELECT 
+  c.name,
+  sum(s.total_price) AS total_amount
+FROM customers c
+JOIN sales s ON c.customer_id = s.customer_id
+GROUP BY c.name
+ORDER BY total_amount DESC
+LIMIT 1;
+
+--Find customers who made purchases in every quarter of 2025.
+WITH customer_quarter AS (
+  SELECT
+  c.customer_id,
+    c.name,
+    CASE  
+      WHEN strftime('%m', s.sale_date) BETWEEN '01' AND '03' THEN 'Q1'
+      WHEN strftime('%m', s.sale_date) BETWEEN '04' AND '06' THEN 'Q2'
+      WHEN strftime('%m', s.sale_date) BETWEEN '07' AND '09' THEN 'Q3'
+      WHEN strftime('%m', s.sale_date) BETWEEN '10' AND '12' THEN 'Q4'
+    END AS quarter
+  FROM customers c
+  JOIN sales s ON s.customer_id = c.customer_id
+  WHERE strftime('%Y', s.sale_date ) = '2025'
+)
+SELECT
+  name,
+  count(distinct quarter) AS quarter_covered
+FROM customer_quarter
+GROUP BY name
+HAVING quarter_covered = 4; 
+  
+  
+--🏪 Store Performance
+
+--Which store had the most diverse product sales (sold the most different products)?
+SELECT
+  st.store_name,
+  count(DISTINCT p.product_id) AS product_variety,
+  count(s.sale_id) AS times_sales
+FROM sales s
+JOIN stores st ON s.store_id = st.store_id
+JOIN products p ON s.product_id = p.product_id
+GROUP BY st.store_name
+ORDER BY product_variety DESC
+LIMIT 1;
+
+--Find the peak sales day for each store.
+with peak_sale_day AS (
+  SELECT
+    st.store_name, 
+    date(s.sale_date) as sale_day,
+    sum(s.total_price) as total_sales
+  FROM sales s
+  JOIN stores st on s.store_id = st.store_id
+  group by st.store_name, sale_day
+),
+ranked_sale AS (
+  SELECT *, 
+         rank() over (PARTITION by store_name ORDER BY total_sales DESC) AS rank
+FROM peak_sale_day
+)
+SELECT 
+   store_name, 
+   sale_day,
+   total_sales
+FROM ranked_sale
+WHERE rank = 1
+
+--Which store had the highest average order value?
+SELECT
+  st.store_name,
+  count(s.sale_id) AS total_sales,
+  round(avg(s.total_price), 2) AS avg_order_value
+FROM stores st
+JOIN sales s ON s.store_id = st.store_id
+GROUP BY st.store_name
+ORDER BY avg_order_value DESC
+LIMIT 1;
+
+
+--📈 Trends &amp; Comparisons
+
+--Show monthly revenue trends over 2024–2025.
+SELECT
+  strftime('%Y', sale_date) AS year,
+  strftime('%m', sale_date) AS month,
+  sum(total_price) AS monthly_revenue
+FROM sales
+WHERE strftime('%Y', sale_date) IN ('2024', '2025')
+GROUP BY year, month
+ORDER by year, month
+
+--Compare average revenue per store in 2024 vs 2025.
+SELECT
+  st.store_name,
+  strftime('%Y', s.sale_date) AS year,
+  round(avg(s.total_price), 2) AS avg_revenue
+FROM sales s
+JOIN stores st on s.store_id = st.store_id
+WHERE strftime('%Y', s.sale_date) IN ('2024','2025')
+GROUP BY st.store_name
+ORDER BY year; 
+	
+--What is the trend of total units sold per month?
+SELECT 
+  strftime('%Y - %m', sale_date) AS year_month,
+  sum(quantity_sold) AS total_quantity,
+  sum(total_price) AS total_revenue
+FROM sales s 
+GROUP BY year_month
+ORDER BY year_month;
+
+
+--🔎 Advanced Challenge
+
+--Which products were consistently top-selling (in top 3) every month?
+WITH monthly_product_sales AS (
+  SELECT
+    p.product_id,
+    p.product_name,
+    strftime('%Y-%m', s.sale_date) AS year_month,
+    SUM(s.quantity_sold) AS total_sold
+  FROM sales s
+  JOIN products p ON s.product_id = p.product_id
+  GROUP BY p.product_id, year_month
+),
+ranked_sales AS (
+  SELECT *,
+    DENSE_RANK() OVER (
+      PARTITION BY year_month
+      ORDER BY total_sold DESC
+    ) AS rank
+  FROM monthly_product_sales
+)
+SELECT product_name
+FROM ranked_sales
+WHERE rank &lt;= 3
+GROUP BY product_id
+HAVING COUNT(DISTINCT year_month) = (SELECT COUNT(DISTINCT strftime('%Y-%m', sale_date)) FROM sales);
+  
+--Find products whose sales dropped 3 months in a row.
+WITH monthly_sales AS (
+  SELECT
+    p.product_id,
+    p.product_name,
+    strftime('%Y-%m', s.sale_date) AS year_month,
+    SUM(s.total_price) AS monthly_sales
+  FROM sales s
+  JOIN products p ON p.product_id = s.product_id
+  GROUP BY p.product_id, year_month
+),
+sales_with_lags AS (
+  SELECT
+    *,
+    LAG(monthly_sales, 1) OVER (PARTITION BY product_id ORDER BY year_month) AS prev_1,
+    LAG(monthly_sales, 2) OVER (PARTITION BY product_id ORDER BY year_month) AS prev_2
+  FROM monthly_sales
+),
+dropped_3_months AS (
+  SELECT 
+    product_name,
+    year_month,
+    monthly_sales,
+    prev_1,
+    prev_2
+  FROM sales_with_lags
+  WHERE monthly_sales &lt; prev_1
+    AND prev_1 &lt; prev_2
+)
+SELECT DISTINCT product_name
+FROM dropped_3_months;
+
+--	Find customers who only purchased from one store
+
+SELECT 
+  c.customer_id,
+  c.name,
+  COUNT(DISTINCT s.store_id) AS store_count
+FROM customers c
+JOIN sales s ON c.customer_id = s.customer_id
+GROUP BY c.customer_id, c.name
+HAVING COUNT(DISTINCT s.store_id) = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</sql><current_tab id="0"/></tab_sql></sqlb_project>
