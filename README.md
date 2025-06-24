@@ -1,9 +1,13 @@
 # SQL_RetailSales_Project
+
  Retail Sales Analysis with SQL
+ 
 📌 Project Overview
+
 This project involves analyzing a retail sales dataset using SQL to generate meaningful business insights. The goal is to explore product performance, customer behavior, sales trends, and store-level contributions by writing SQL queries across multiple related tables.
 ________________________________________
 🧱 Dataset Description
+
 The dataset simulates a retail environment and includes the following tables:
 Table Name	Description
 products	Contains product information such as ID, name, category, and unit price.
@@ -13,6 +17,7 @@ stores	Lists store information such as store ID, store name, and location.
 Source: Generated for learning purposes by ChatGPT.
 ________________________________________
 💡 Project Scope
+
 This project focuses on solving real-world analytical queries using SQL.
 
 📊 Sales & Revenue Analysis
