@@ -6,6 +6,12 @@
 
 This project involves analyzing a retail sales dataset using SQL to generate meaningful business insights. The goal is to explore product performance, customer behavior, sales trends, and store-level contributions by writing SQL queries across multiple related tables.
 ________________________________________
+
+## 📂 Repository Structure
+- `queries.sql` → All SQL queries used in this project  
+- `Sales_Analysis with SQL.pdf` → Report with insights  
+- `Retail_sales.sqbpro` → SQLite project file (can be opened in DB Browser)  
+
 🧱 Dataset Description
 
 The dataset simulates a retail environment and includes the following tables:
