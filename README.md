@@ -1,3 +1,6 @@
+![SQL](https://img.shields.io/badge/SQL-SQLite-blue)
+![Project](https://img.shields.io/badge/Project-Retail_Sales-orange)
+
 # SQL_RetailSales_Project
 
  Retail Sales Analysis with SQL
@@ -13,6 +16,12 @@ ________________________________________
 - `Retail_sales.sqbpro` → SQLite project file (can be opened in DB Browser)
 ________________________________________  
 
+ 🔍 Key Insights
+- Store A generated the highest revenue in 2025  
+- Smartphones and laptops were top sellers across all stores  
+- Customer retention was highest in Q3 2025
+________________________________________ 
+
 🧱 Dataset Description
 
 The dataset simulates a retail environment and includes the following tables:
@@ -24,6 +33,7 @@ stores	Lists store information such as store ID, store name, and location.
 
 Source: Generated for learning purposes by ChatGPT.
 ________________________________________
+
 💡 Project Scope
 
 This project focuses on solving real-world analytical queries using SQL.
