@@ -12,7 +12,7 @@ ________________________________________
 
  ## 📂 Repository Structure
 - `queries.sql` → All SQL queries used in this project  
-- `Sales_Analysis with SQL.pdf` → Report with insights  
+- [`Sales_Analysis_with_SQL_.pdf`](https://github.com/Poornima044/SQL_RetailSales_Project/blob/main/Sales_Analysis_with_SQL_.pdf) → Report with insights  
 - `Retail_sales.sqbpro` → SQLite project file (can be opened in DB Browser)
 ________________________________________  
 
@@ -74,34 +74,11 @@ ________________________________________
 19.	Find customers who only purchased from one store
 _______________________________________
 
-## Sales & Revenue Analysis
+## 🖥️ Example Query & Output
+
+**Query:**
 ```sql
 SELECT product_id, SUM(quantity * unit_price) AS total_revenue
 FROM sales
 GROUP BY product_id
 ORDER BY total_revenue DESC;
-```
-________________________________________
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
