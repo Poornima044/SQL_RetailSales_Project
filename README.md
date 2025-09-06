@@ -22,6 +22,15 @@ ________________________________________
 - Customer retention was highest in Q3 2025
 ________________________________________ 
 
+| Table      | Description |
+|------------|-------------|
+| products   | Contains product information such as ID, name, category, and unit price. |
+| customers  | Includes customer details like ID, name, and location. |
+| sales      | Tracks each sale (product ID, customer ID, store ID, quantity, price, date). |
+| stores     | Lists store information (store ID, name, and location). |
+
+________________________________________ 
+
 ## 🧱 Dataset Description
 
 The dataset simulates a retail environment and includes the following tables:
@@ -74,6 +83,18 @@ ________________________________________
 17.	Which products were consistently top-selling (in top 3) every month?
 18.	Find products whose sales dropped 3 months in a row.
 19.	Find customers who only purchased from one store
+_______________________________________
+
+## Sales & Revenue Analysis
+```sql
+SELECT product_id, SUM(quantity * unit_price) AS total_revenue
+FROM sales
+GROUP BY product_id
+ORDER BY total_revenue DESC;
+```
+________________________________________
+
+
 
 
 
