@@ -29,17 +29,6 @@ ________________________________________
 | sales      | Tracks each sale (product ID, customer ID, store ID, quantity, price, date). |
 | stores     | Lists store information (store ID, name, and location). |
 
-________________________________________ 
-
-## 🧱 Dataset Description
-
-The dataset simulates a retail environment and includes the following tables:
-Table Name	Description
-products	Contains product information such as ID, name, category, and unit price.
-customers	Includes customer details like ID, name, and location.
-sales	Tracks each sale, including product ID, customer ID, store ID, quantity, unit price, and date of sale.
-stores	Lists store information such as store ID, store name, and location.
-
 Source: Generated for learning purposes by ChatGPT.
 ________________________________________
 
